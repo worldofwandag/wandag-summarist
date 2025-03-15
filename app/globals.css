@@ -19,6 +19,10 @@ a {
   color: inherit;
 }
 
+b {
+  font-weight: bold;
+}
+
 ul {
   list-style: none;
 }
@@ -164,7 +168,7 @@ button:disabled {
 .landing__content__subtitle {
   color: #394547;
   font-size: 20px;
-  font-weight: 300;
+  font-weight: 100;
   margin-bottom: 24px;
   line-height: 1.5;
 }
