@@ -600,6 +600,20 @@ MODAL
   padding: 0 12px;
 }
 
+.login__error {
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  background-color: #edf3f1;
+  color: #e40737d2;
+  width: 100%;
+  border-radius: 0 0 4px 4px;
+  font-weight: 400;
+  font-size: 14px;
+}
+
 .auth__password--reset-input{
   width: 100%;
 }

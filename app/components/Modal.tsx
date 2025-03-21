@@ -21,6 +21,8 @@ export default function Modal({ exitModal }) {
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState(""); // State for forgot password
   const [message, setMessage] = useState(""); // State for feedback message
   const [showPasswordReset, setShowPasswordReset] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordLength, setPasswordLength] = useState("");
 
   const router = useRouter();
 
@@ -68,6 +70,7 @@ export default function Modal({ exitModal }) {
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+        setPasswordLength("Password should be at least 6 characters long")
         console.error(errorCode, errorMessage); // Handle error appropriately
       });
   }
@@ -84,6 +87,7 @@ export default function Modal({ exitModal }) {
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+        setPasswordError("Error: password is invalid or user is not registered");
         console.error(errorCode, errorMessage); // Handle error appropriately
       });
   }
@@ -213,6 +217,7 @@ export default function Modal({ exitModal }) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              {passwordLength && <div className="login__error">{passwordLength}</div>}
               <button className="btn auth_modal--button" type="submit">
                 <span>Sign Up</span>
               </button>
@@ -233,6 +238,7 @@ export default function Modal({ exitModal }) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              {passwordError && <div className="login__error">{passwordError}</div>}
               <button className="btn auth_modal--button" type="submit">
                 <span>Login</span>
               </button>
