@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import logo from "./assets/logo.png";
 import landing from "./assets/landing.png";
@@ -5,19 +7,36 @@ import { AiFillFileText, AiFillBulb, AiFillAudio } from "react-icons/ai";
 import { BsStarFill, BsStarHalf } from "react-icons/bs";
 import { BiCrown } from "react-icons/bi";
 import { RiLeafLine } from "react-icons/ri";
+import Modal from "./components/Modal";
+import React, { useState } from "react";
 
 export default function Home() {
+  const [showModal, setShowModal] = useState(false);
+
+  function openModal(): void {
+    setShowModal(true);
+  }
+
+  function exitModal(): void {
+    setShowModal(false);
+  }
+
   return (
     <>
+      {/* modal */}
+
+      {showModal && <Modal exitModal={exitModal}/>}
+
       {/* nav */}
       <nav className="nav">
         <div className="nav__wrapper">
           <figure className="nav__img--mask">
             <Image src={logo} width={500} height={500} alt="logo" />
-            {/* <img className="nav__img" src="/logo.png" alt="logo" /> */}
           </figure>
           <ul className="nav__list--wrapper">
-            <li className="nav__list nav__list--login">Login</li>
+            <li className="nav__list nav__list--login" onClick={openModal}>
+              Login
+            </li>
             <li className="nav__list nav__list--mobile">About</li>
             <li className="nav__list nav__list--mobile">Contact</li>
             <li className="nav__list nav__list--mobile">Help</li>
@@ -32,9 +51,8 @@ export default function Home() {
           <div className="container">
             <div className="landing__wrapper">
               <div className="landing__content">
-                <div className="tracking-tight leading-snug landing__content__title">
-                  Gain more knowledge{" "}
-                  <br className="leading-snugremove--tablet" />
+                <div className="leading-tight landing__content__title">
+                  Gain more knowledge <br className="remove--tablet" />
                   in less time
                 </div>
                 <div className="landing__content__subtitle ">
@@ -44,7 +62,9 @@ export default function Home() {
                   <br className="remove--tablet" />
                   and even people who don’t like to read.
                 </div>
-                <button className="btn home__cta--btn">Login</button>
+                <button className="btn home__cta--btn" onClick={openModal}>
+                  Login
+                </button>
               </div>
               <figure className="landing__image--mask">
                 <Image
@@ -53,7 +73,6 @@ export default function Home() {
                   height={500}
                   alt="landing image"
                 />
-                {/* <img src="" alt="landing" /> */}
               </figure>
             </div>
           </div>
@@ -142,8 +161,8 @@ export default function Home() {
                   <div className="statistics__data--number">91%</div>
                   <div className="statistics__data--title">
                     of Summarist members <b>report feeling more productive</b>
-                    {""}
-                    after incorporating the service into their daily routine.
+                    {""} after incorporating the service into their daily
+                    routine.
                   </div>
                 </div>
                 <div className="statistics__data">
@@ -192,6 +211,10 @@ export default function Home() {
                   <div className="review__name">Hanna M.</div>
                   <div className="review__stars">
                     <BsStarFill />
+                    <BsStarFill />
+                    <BsStarFill />
+                    <BsStarFill />
+                    <BsStarFill />
                   </div>
                 </div>
                 <div className="review__body">
@@ -205,10 +228,14 @@ export default function Home() {
                   <div className="review__name">David B.</div>
                   <div className="review__stars">
                     <BsStarFill />
+                    <BsStarFill />
+                    <BsStarFill />
+                    <BsStarFill />
+                    <BsStarFill />
                   </div>
                 </div>
                 <div className="review__body">
-                  I love this app! It provides
+                  I love this app! It provides{" "}
                   <b>concise and accurate summaries</b> of books in a way that
                   is easy to understand. It's also very user-friendly and
                   intuitive.
@@ -219,12 +246,16 @@ export default function Home() {
                   <div className="review__name">Nathan S.</div>
                   <div className="review__stars">
                     <BsStarFill />
+                    <BsStarFill />
+                    <BsStarFill />
+                    <BsStarFill />
+                    <BsStarFill />
                   </div>
                 </div>
                 <div className="review__body">
                   This app is a great way to get the main takeaways from a book
-                  without having to read the entire thing.
-                  <b>The summaries are well-written and informative.</b>
+                  without having to read the entire thing.{" "}
+                  <b>The summaries are well-written and informative.</b>{" "}
                   Definitely worth downloading.
                 </div>
               </div>
@@ -233,10 +264,14 @@ export default function Home() {
                   <div className="review__name">Ryan R.</div>
                   <div className="review__stars">
                     <BsStarFill />
+                    <BsStarFill />
+                    <BsStarFill />
+                    <BsStarFill />
+                    <BsStarFill />
                   </div>
                 </div>
                 <div className="review__body">
-                  If you're a busy person who
+                  If you're a busy person who{" "}
                   <b>loves reading but doesn't have the time</b> to read every
                   book in full, this app is for you! The summaries are thorough
                   and provide a great overview of the book's content.
@@ -244,7 +279,9 @@ export default function Home() {
               </div>
             </div>
             <div className="reviews__btn--wrapper">
-              <button className="btn home__cta--btn">Login</button>
+              <button className="btn home__cta--btn" onClick={openModal}>
+                Login
+              </button>
             </div>
           </div>
         </div>
@@ -270,6 +307,9 @@ export default function Home() {
               </div>
               <div className="numbers">
                 <div className="numbers__icon numbers__star--icon">
+                  <BsStarFill />
+                  <BsStarFill />
+                  <BsStarFill />
                   <BsStarFill />
                   <BsStarHalf />
                 </div>
