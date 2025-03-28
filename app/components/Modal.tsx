@@ -10,6 +10,7 @@ import {
   GoogleAuthProvider,
   sendPasswordResetEmail,
   signInAnonymously,
+  onAuthStateChanged,
 } from "firebase/auth";
 const provider = new GoogleAuthProvider(); // Initialize Google provider
 
@@ -23,6 +24,7 @@ export default function Modal({ exitModal }) {
   const [showPasswordReset, setShowPasswordReset] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [passwordLength, setPasswordLength] = useState("");
+  
 
   const router = useRouter();
 
@@ -32,8 +34,8 @@ export default function Modal({ exitModal }) {
         // User successfully logged in
         const user = result.user;
         console.log("User logged in: ", user);
-        // Redirect to "/foryou" page
-        router.push("/foryou");
+        // Redirect to "/for-you" page
+        router.push("/for-you");
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -48,8 +50,8 @@ export default function Modal({ exitModal }) {
         // User successfully registered
         const user = result.user;
         console.log("User registered: ", user);
-        // Redirect to "/foryou" page
-        router.push("/foryou");
+        // Redirect to "/for-you" page
+        router.push("/for-you");
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -64,8 +66,8 @@ export default function Modal({ exitModal }) {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        // Redirect to "/foryou" page
-        router.push("/foryou");
+        // Redirect to "/for-you" page
+        router.push("/for-you");
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -81,8 +83,8 @@ export default function Modal({ exitModal }) {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        // Redirect to "/foryou" page
-        router.push("/foryou");
+        // Redirect to "/for-you" page
+        router.push("/for-you");
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -116,8 +118,8 @@ export default function Modal({ exitModal }) {
         // User signed in anonymously
         const user = userCredential.user;
         console.log("Guest logged in:", user);
-        // Navigate to the /foryou page
-        router.push("/foryou");
+        // Navigate to the /for-you page
+        router.push("/for-you");
     })
     .catch((error) => {
         const errorCode = error.code;
