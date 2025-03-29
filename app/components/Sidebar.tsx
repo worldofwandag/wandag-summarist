@@ -1,8 +1,25 @@
+"use client"
+
 import React from "react";
 import logo from "../assets/logo.png";
 import Image from "next/image";
+import { logout } from '../utility/auth'; // Import the logout function
+import { useRouter } from 'next/navigation'; // Import useRouter
 
 function Sidebar() {
+  
+
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await logout(); // Call logout function
+      router.push('/'); // Redirect to login page
+    } catch (error) {
+      console.error('Logout Error:', error);
+    }
+  };
+
   return (
     <>
       <div className="sidebar sidebar--closed">
@@ -129,7 +146,7 @@ function Sidebar() {
               </div>
               <div className="sidebar__link--text">Help &amp; Support</div>
             </div>
-            <div className="sidebar__link--wrapper">
+            <div className="sidebar__link--wrapper" onClick={handleLogout}>
               <div className="sidebar__link--line "></div>
               <div className="sidebar__icon--wrapper">
                 <svg
