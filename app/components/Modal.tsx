@@ -29,6 +29,7 @@ export default function Modal({ exitModal }) {
     try {
       await googleLogin();
       router.push("/for-you");
+      console.log("google logged in")
     } catch (error) {
       console.error(error);
     }
@@ -37,6 +38,7 @@ export default function Modal({ exitModal }) {
   const handleGoogleRegister = async () => {
     try {
       await googleRegister();
+      console.log("google registered")
       router.push("/for-you");
     } catch (error) {
       console.error(error);
@@ -47,6 +49,7 @@ export default function Modal({ exitModal }) {
     e.preventDefault();
     try {
       await summaristRegister(email, password);
+      console.log("Registering")
       router.push("/for-you");
     } catch (error) {
       setPasswordLength("Password should be at least 6 characters long");
@@ -58,6 +61,7 @@ export default function Modal({ exitModal }) {
     e.preventDefault();
     try {
       await summaristLogin(email, password);
+      console.log("logged in")
       router.push("/for-you");
     } catch (error) {
       setPasswordError("Error: password is invalid or user is not registered");
@@ -69,6 +73,7 @@ export default function Modal({ exitModal }) {
     if (showPasswordReset) {
       try {
         await forgotPassword(forgotPasswordEmail);
+        console.log("reset pw")
         setMessage("Password reset email sent! Check your inbox.");
       } catch (error) {
         setMessage("Error: " + error.message);
@@ -82,13 +87,14 @@ export default function Modal({ exitModal }) {
   const handleGuestLogin = async () => {
     try {
       await guestLogin();
+      console.log("guest logged in")
       router.push("/for-you");
     } catch (error) {
       console.error(error);
     }
   };
 
-  const handleClickOutside = (event) => {
+  const handleClickOutside = (event: any) => {
     if (modalContentRef.current && !modalContentRef.current.contains(event.target)) {
       exitModal();
     }

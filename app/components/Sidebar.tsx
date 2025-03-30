@@ -14,6 +14,7 @@ function Sidebar() {
   const handleLogout = async () => {
     try {
       await logout(); // Call logout function
+      console.log("logging out")
       router.push('/'); // Redirect to login page
     } catch (error) {
       console.error('Logout Error:', error);
