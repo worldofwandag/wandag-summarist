@@ -3,7 +3,7 @@ import React from "react";
 function Searchbar() {
   return (
     <>
-      <div className="wrapper">
+      
         <div className="search__background">
           <div className="search__wrapper">
             <figure>
@@ -13,7 +13,7 @@ function Searchbar() {
               <div className="search">
                 <div className="search__input--wrapper">
                   <input
-                    className="search__input"
+                    className="search__input text-xs text-red-300"
                     placeholder="Search for books"
                     type="text"
                   />
@@ -53,7 +53,7 @@ function Searchbar() {
             </div>
           </div>
         </div>
-      </div>
+      
     </>
   );
 }

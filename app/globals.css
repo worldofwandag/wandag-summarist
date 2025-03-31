@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap");
 
 * {
@@ -704,6 +705,7 @@ FOR-YOU
   width: 100%;
 }
 
+
 /* 
 
 SEARCH BAR
@@ -754,6 +756,7 @@ SEARCH BAR
   gap: 8px;
 }
 .search__input {
+  /* font-size: 13px; */
   height: 40px;
   width: 100%;
   padding: 0 16px;
@@ -1017,6 +1020,29 @@ SELECTED FOR YOU
   border-radius: 20px;
 }
 
+.book__image--wrapper {
+  width: 172px;
+  height: 172px;
+}
+
+.book__image--wrapper--selected {
+  width: 140px;
+  height: 140px;
+  min-width: 140px;
+}
+
+.book__image {
+  width: 100%;
+  height: 100%;
+}
+.book__image--skeleton {
+  width: 120px;
+  height: 100%;
+  margin: 0 auto;
+  border-radius: 4px;
+  background-color: #e0e0e0;
+}
+
 .selected__book {
   display: flex;
   justify-content: space-between;
@@ -1126,6 +1152,11 @@ SELECTED FOR YOU
 RECOMMENDED
 
 */
+
+.for-you__recommended--wrapper{
+  display: flex;
+  flex-direction: row;
+}
 
 .for-you__recommended--books {
   display: flex;

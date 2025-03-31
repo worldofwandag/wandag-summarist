@@ -1,6 +1,7 @@
 
-
 import React, { useState } from "react";
+import { Books } from "../utility/book";
+
 
 
 export default async function Selected() {
@@ -9,11 +10,14 @@ export default async function Selected() {
   );
   const selectedPosts = await data.json();
 
+  
+
+  
   return (
     <>
       <div className="for-you__title">Selected just for you
       </div>
-      {selectedPosts.map((selectedPost: any) => (
+      {selectedPosts.map((selectedPost:Books) => (
         <div key={selectedPost.id}>
           <audio src={selectedPost.audioLink} />
           <a className="selected__book" href="/book/f9gy1gpai8">
@@ -23,10 +27,9 @@ export default async function Selected() {
           
           <div className="selected__book--line"></div>
           <div className="selected__book--content">
-            <figure className="book__image--wrapper">
-              <img src={selectedPost.imageLink}
-              width={140}
-              height={140}/>
+            <figure className="book__image--wrapper--selected">
+              <img className="book__image" src={selectedPost.imageLink}
+              />
             </figure>
             <div className="selected__book--text">
               <div className="selected__book--title">{selectedPost.title}</div>
