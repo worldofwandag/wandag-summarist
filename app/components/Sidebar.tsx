@@ -1,27 +1,24 @@
-
-
 import React, { useState } from "react";
 import logo from "../assets/logo.png";
 import Image from "next/image";
-
-import { useRouter } from "next/navigation"; // Import useRouter
 import Modal from "./Modal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import the CSS for styling
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../utility/auth";
+import { RootState } from "@reduxjs/toolkit/query";
 
 function Sidebar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // New state to track login status
   const [showModal, setShowModal] = useState(false);
-  const router = useRouter();
   const dispatch = useDispatch(); // Set up dispatch
+
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn); // Access the state
 
   const handleLogout = async () => {
     try {
       await dispatch(logoutUser()); // Call logout function
       console.log("logging out");
-      
+
       toast.success("Successfully logged out!");
     } catch (error) {
       console.error("Logout Error:", error);
@@ -39,9 +36,8 @@ function Sidebar() {
 
   return (
     <>
-  <ToastContainer /> {/* Add this line to render toast notifications */}
-    {showModal && <Modal exitModal={exitModal}/>}
-
+      <ToastContainer /> {/* Add this line to render toast notifications */}
+      {showModal && <Modal exitModal={exitModal} />}
       <div className="sidebar sidebar--closed">
         <div className="sidebar__logo">
           <Image src={logo} width={0} height={0} alt="logo" />

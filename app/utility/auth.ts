@@ -1,4 +1,5 @@
 // utils/auth.ts
+
 import { auth } from "../firebase/config";
 import {
   createUserWithEmailAndPassword,
