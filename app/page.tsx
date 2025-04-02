@@ -11,6 +11,7 @@ import Modal from "./components/Modal";
 import React, { useEffect, useState } from "react";
 
 export default function Home() {
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const texts = [
@@ -51,7 +52,7 @@ export default function Home() {
     <>
       {/* modal */}
 
-      {showModal && <Modal exitModal={exitModal} />}
+      {showModal && <Modal exitModal={exitModal}/>}
 
       {/* nav */}
       <nav className="nav">

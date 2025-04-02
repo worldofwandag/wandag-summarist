@@ -1,5 +1,6 @@
 import React from "react";
 import { Books } from "../utility/book";
+import Link from "next/link";
 
 export default async function Suggested() {
   const data = await fetch(
@@ -13,11 +14,8 @@ export default async function Suggested() {
       <div className="for-you__sub--title">Browse those books</div>
       <div className="for-you__recommended--books">
         {suggestedBooks.map((suggestedBook: Books) => (
-          <a
-            className="for-you__recommended--books-link"
-            href="/book/6ncszvwbl4e"
-            key={suggestedBook.id}
-          >
+
+          <Link href={`/book/${suggestedBook.id}`} key={suggestedBook.id}>
             {suggestedBook.subscriptionRequired ? (
                   <div className="book__pill book__pill--subscription-required" >Premium</div>
                 ) : (
@@ -70,7 +68,8 @@ export default async function Suggested() {
                 <div className="recommended__book--details-text">{suggestedBook.averageRating}</div>
               </div>
             </div>
-          </a>
+            </Link>
+          
         ))}
       </div>
     </div>
