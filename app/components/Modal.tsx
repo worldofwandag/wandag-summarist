@@ -1,4 +1,3 @@
-
 import React, { useRef, useState } from "react";
 import Image from "next/image";
 import googleLogo from "../assets/google.png";
@@ -12,7 +11,7 @@ import {
   guestLogin,
 } from "../utility/auth"; // Importing authentication functions
 import { useDispatch } from "react-redux";
-
+import { AppDispatch } from "../redux/store";
 
 interface ModalProps {
   exitModal: () => void; // Function type for exiting modal
@@ -30,14 +29,13 @@ export default function Modal({ exitModal }: ModalProps) {
   const [passwordLength, setPasswordLength] = useState("");
 
   const router = useRouter();
-  const dispatch = useDispatch(); // Set up dispatch
+  const dispatch = useDispatch<AppDispatch>(); // Set up dispatch
 
   const handleGoogleLogin = async () => {
     try {
       await dispatch(googleLogin()); // Dispatch Google login action
       exitModal();
       const currentPath = window.location.pathname;
-
       if (currentPath === "/") {
         router.push("/for-you");
       } else if (currentPath.startsWith("/book/")) {
@@ -62,12 +60,12 @@ export default function Modal({ exitModal }: ModalProps) {
     }
   };
 
-  const handleSummaristRegister = async (e) => {
+  const handleSummaristRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await dispatch(summaristRegister(email, password));
+      await dispatch(summaristRegister({ email, password })).unwrap(); // Pass email and password as an object
       console.log("Registering");
-
+  
       router.push("/for-you");
     } catch (error) {
       setPasswordLength("Password should be at least 6 characters long");
@@ -75,14 +73,13 @@ export default function Modal({ exitModal }: ModalProps) {
     }
   };
 
-  const handleSummaristLogin = async (e) => {
+  const handleSummaristLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await dispatch(summaristLogin(email, password));
+      await dispatch(summaristLogin({email, password})).unwrap(); // Pass email and password as an object
       console.log("logged in");
       exitModal(); // Close the modal after login
       const currentPath = window.location.pathname;
-
       if (currentPath === "/") {
         router.push("/for-you");
       } else if (currentPath.startsWith("/book/")) {
@@ -99,18 +96,19 @@ export default function Modal({ exitModal }: ModalProps) {
   const handleForgotPassword = async () => {
     if (showPasswordReset) {
       try {
-        await forgotPassword(forgotPasswordEmail);
+        await dispatch(forgotPassword(forgotPasswordEmail)).unwrap();
         console.log("reset pw");
         setMessage("Password reset email sent! Check your inbox.");
       } catch (error) {
-        setMessage("Error: " + error.message);
+        const errorMessage =
+          error instanceof Error ? error.message : "An unknown error occurred";
+        setMessage("Error: " + errorMessage);
         console.error(error);
       }
     } else {
       setShowPasswordReset(true);
     }
   };
-
   const handleGuestLogin = async () => {
     try {
       await dispatch(guestLogin()); // Dispatch guest login action
@@ -133,7 +131,7 @@ export default function Modal({ exitModal }: ModalProps) {
   const handleClickOutside = (event: React.MouseEvent) => {
     if (
       modalContentRef.current &&
-      !modalContentRef.current.contains(event.target)
+      !modalContentRef.current.contains(event.target as Node)
     ) {
       exitModal();
     }

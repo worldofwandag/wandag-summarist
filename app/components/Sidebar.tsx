@@ -6,19 +6,24 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import the CSS for styling
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../utility/auth";
-import { RootState } from "@reduxjs/toolkit/query";
+import { RootState } from "../redux/store";
+import { AppDispatch } from "../redux/store";
 
-function Sidebar() {
+function Sidebar(): React.JSX.Element {
   const [showModal, setShowModal] = useState(false);
-  const dispatch = useDispatch(); // Set up dispatch
+  const dispatch = useDispatch<AppDispatch>(); // Set up dispatch
 
-  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn); // Access the state
+  const isLoggedIn = useSelector(
+    (state: RootState) =>
+      state.user.isGuestLoggedIn ||
+      state.user.isGoogleLoggedIn ||
+      state.user.email !== null
+  ); // Access the state
 
   const handleLogout = async () => {
     try {
       await dispatch(logoutUser()); // Call logout function
       console.log("logging out");
-
       toast.success("Successfully logged out!");
     } catch (error) {
       console.error("Logout Error:", error);
