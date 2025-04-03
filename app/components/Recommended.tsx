@@ -1,64 +1,95 @@
 import React from "react";
-import { Books } from "../utility/book";
 import Link from "next/link";
-import { GetServerSideProps } from "next";
-import { initializeApp, getApps, cert } from "firebase-admin/app";
-import { getAuth } from "firebase-admin/auth";
+import { cookies } from "next/headers"; // For accessing cookies in server components
+import { initAdmin } from "../firebase/firebaseAdmin"; // Firebase Admin initialization
 
+interface Books {
+  id: string;
+  title: string;
+  author: string;
+  subTitle?: string;
+  imageLink?: string;
+  audioLink?: string;
+  subscriptionRequired?: boolean;
+  averageRating?: number;
+}
 
 interface RecommendedProps {
   books: Books[];
   isLoggedIn: boolean;
+  fetchError?: string;
 }
 
-// Server-side logic to fetch books and determine login status
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  // Initialize Firebase Admin SDK if not already initialized
-  if (!getApps().length) {
-    initializeApp({
-      credential: cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
-      }),
-    });
-  }
+// Server-side function to fetch books and verify authentication
+async function fetchRecommendedBooks(): Promise<RecommendedProps> {
+  const cookieStore = cookies();
+  const token = cookieStore.get("authToken")?.value;
 
-  const auth = getAuth();
-
-  // Get the ID token from cookies
-  const token = context.req.cookies["authToken"];
   let isLoggedIn = false;
+  let books: Books[] = [];
+  let fetchError = null;
 
-  if (token) {
-    try {
-      // Verify the ID token
-      const decodedToken = await auth.verifyIdToken(token);
-      isLoggedIn = !!decodedToken; // If the token is valid, the user is logged in
-    } catch (error) {
-      console.error("Error verifying ID token:", error);
+  try {
+    // Initialize Firebase Admin
+    const admin = await initAdmin();
+    const auth = admin.auth();
+
+    // Verify Firebase Auth Token
+    if (token) {
+      try {
+        const decodedToken = await auth.verifyIdToken(token);
+        isLoggedIn = !!decodedToken;
+      } catch (error) {
+        console.error("Error verifying ID token:", error);
+      }
     }
+
+    // Fetch books
+    try {
+      const response = await fetch(
+        `https://us-central1-summaristt.cloudfunctions.net/getBooks?status=recommended`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch books: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      if (Array.isArray(data)) {
+        books = data;
+      } else if (data?.books && Array.isArray(data.books)) {
+        books = data.books; // Handle { books: [...] } structure
+      } else {
+        throw new Error("Unexpected API response format");
+      }
+    } catch (error) {
+      console.error("Error fetching books:", error);
+      fetchError = error.message;
+    }
+  } catch (error) {
+    console.error("Error initializing Firebase Admin:", error);
+    fetchError = "Failed to initialize Firebase Admin";
   }
 
-  // Fetch books
-  const data = await fetch(
-    `https://us-central1-summaristt.cloudfunctions.net/getBooks?status=recommended`
-  );
-  const books = await data.json();
+  return { books, isLoggedIn, fetchError };
+}
 
-  return {
-    props: {
-      books: Array.isArray(books) ? books : [], // Ensure books is always an array
-      isLoggedIn,
-    },
-  };
-};
+// Recommended Component
+export default async function Recommended() {
+  const { books, isLoggedIn, fetchError } = await fetchRecommendedBooks();
 
-export default function Recommended({ books, isLoggedIn }: RecommendedProps) {
   return (
     <div>
       <div className="for-you__title">Recommended For You</div>
       <div className="for-you__sub--title">We think you’ll like these</div>
+      {fetchError && (
+        <div
+          className="error-message"
+          style={{ color: "red", marginBottom: "1rem" }}
+        >
+          Error fetching books: {fetchError}
+        </div>
+      )}
       <div className="for-you__recommended--books">
         {books && books.length > 0 ? (
           books.map((book: Books) => (
@@ -69,14 +100,20 @@ export default function Recommended({ books, isLoggedIn }: RecommendedProps) {
                     Premium
                   </div>
                 )}
-                <audio src={book.audioLink}></audio>
+                {book.audioLink && <audio src={book.audioLink}></audio>}
                 <figure className="book__image--wrapper">
-                  <img src={book.imageLink} alt={book.title} />
+                  {book.imageLink && (
+                    <img src={book.imageLink} alt={book.title || "Book"} />
+                  )}
                 </figure>
-                <div className="recommended__book--title">{book.title}</div>
-                <div className="recommended__book--author">{book.author}</div>
+                <div className="recommended__book--title">
+                  {book.title || "Unknown Title"}
+                </div>
+                <div className="recommended__book--author">
+                  {book.author || "Unknown Author"}
+                </div>
                 <div className="recommended__book--sub-title">
-                  {book.subTitle}
+                  {book.subTitle || ""}
                 </div>
                 <div className="recommended__book--details-wrapper">
                   <div className="recommended__book--details">
@@ -111,7 +148,7 @@ export default function Recommended({ books, isLoggedIn }: RecommendedProps) {
                       </svg>
                     </div>
                     <div className="recommended__book--details-text">
-                      {book.averageRating}
+                      {book.averageRating || "-"}
                     </div>
                   </div>
                 </div>
@@ -119,8 +156,12 @@ export default function Recommended({ books, isLoggedIn }: RecommendedProps) {
             </Link>
           ))
         ) : (
-          <div>
-            <b>****Server Side Fetching Didn't Work****</b>
+          <div className="no-books-message">
+            <b>
+              {fetchError
+                ? "Error loading books"
+                : "No recommended books available"}
+            </b>
           </div>
         )}
       </div>
