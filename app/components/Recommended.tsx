@@ -2,17 +2,9 @@ import React from "react";
 import Link from "next/link";
 import { cookies } from "next/headers"; // For accessing cookies in server components
 import { initAdmin } from "../firebase/firebaseAdmin"; // Firebase Admin initialization
+import { admin } from "../firebase/firebaseAdmin"; // Import the admin object
+import { Books } from "../utility/book";
 
-interface Books {
-  id: string;
-  title: string;
-  author: string;
-  subTitle?: string;
-  imageLink?: string;
-  audioLink?: string;
-  subscriptionRequired?: boolean;
-  averageRating?: number;
-}
 
 interface RecommendedProps {
   books: Books[];
@@ -22,27 +14,27 @@ interface RecommendedProps {
 
 // Server-side function to fetch books and verify authentication
 async function fetchRecommendedBooks(): Promise<RecommendedProps> {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get("authToken")?.value;
 
   let isLoggedIn = false;
   let books: Books[] = [];
-  let fetchError = null;
+  let fetchError = undefined;
+  console.log("isLoggedIn:", isLoggedIn);
 
   try {
-    // Initialize Firebase Admin
-    const admin = await initAdmin();
-    const auth = admin.auth();
+    console.log("authToken:", token);
 
     // Verify Firebase Auth Token
     if (token) {
       try {
-        const decodedToken = await auth.verifyIdToken(token);
+        const decodedToken = await admin.auth().verifyIdToken(token); // Use admin.auth() directly
         isLoggedIn = !!decodedToken;
       } catch (error) {
         console.error("Error verifying ID token:", error);
       }
     }
+
 
     // Fetch books
     try {
@@ -64,7 +56,7 @@ async function fetchRecommendedBooks(): Promise<RecommendedProps> {
       }
     } catch (error) {
       console.error("Error fetching books:", error);
-      fetchError = error.message;
+      fetchError = (error as Error).message;
     }
   } catch (error) {
     console.error("Error initializing Firebase Admin:", error);
@@ -95,7 +87,7 @@ export default async function Recommended() {
           books.map((book: Books) => (
             <Link href={`/book/${book.id}`} key={book.id}>
               <div className="for-you__recommended--books-link">
-                {book.subscriptionRequired && isLoggedIn && (
+                {book.subscriptionRequired && !isLoggedIn && (
                   <div className="book__pill book__pill--subscription-required">
                     Premium
                   </div>

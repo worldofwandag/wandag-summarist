@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import Image from "next/image";
 import googleLogo from "../assets/google.png";
 import { useRouter } from "next/navigation";
+import { auth } from "../firebase/config";
 import {
   googleLogin,
   googleRegister,
@@ -12,6 +13,7 @@ import {
 } from "../utility/auth"; // Importing authentication functions
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../redux/store";
+import { routeReplacer } from "../utility/routeReplacer";
 
 interface ModalProps {
   exitModal: () => void; // Function type for exiting modal
@@ -33,63 +35,113 @@ export default function Modal({ exitModal }: ModalProps) {
 
   const handleGoogleLogin = async () => {
     try {
-      await dispatch(googleLogin()); // Dispatch Google login action
-      exitModal();
-      const currentPath = window.location.pathname;
-      if (currentPath === "/") {
-        router.push("/for-you");
-      } else if (currentPath.startsWith("/book/")) {
-        // Stay on the current book page
-      } else {
-        router.push("/for-you"); // Default fallback
+      // Dispatch the googleLogin action to update Redux state with serializable data
+      const user = await dispatch(googleLogin()).unwrap();
+      // Retrieve the idToken directly from Firebase Authentication
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        throw new Error("No current user found after Google login");
       }
-      console.log("google logged in");
+      const idToken = await currentUser.getIdToken();
+      // Call the API to set the authToken cookie
+      await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ idToken }),
+      });
+      exitModal(); // Close the modal
+      // Determine the current path and navigate accordingly
+      routeReplacer(router);
     } catch (error) {
-      console.error(error);
+      console.error("Google Login Error:", error);
     }
   };
 
   const handleGoogleRegister = async () => {
     try {
-      await dispatch(googleRegister());
-      console.log("google registered");
-      exitModal(); // Close the modal after login
-      router.push("/for-you");
+      // Dispatch the googleRegister action to update Redux state with serializable data
+      const user = await dispatch(googleRegister()).unwrap();
+      // Retrieve the idToken directly from Firebase Authentication
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        throw new Error("No current user found after Google registration");
+      }
+      const idToken = await currentUser.getIdToken();
+      // Call the API to set the authToken cookie
+      await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ idToken }),
+      });
+      exitModal(); // Close the modal
+      // Determine the current path and navigate accordingly
+      routeReplacer(router);
     } catch (error) {
-      console.error(error);
+      console.error("Google Register Error:", error);
     }
   };
 
-  const handleSummaristRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSummaristRegister = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
     try {
-      await dispatch(summaristRegister({ email, password })).unwrap(); // Pass email and password as an object
-      console.log("Registering");
-  
-      router.push("/for-you");
+      // Dispatch the summaristRegister action to update Redux state with serializable data
+      const user = await dispatch(
+        summaristRegister({ email, password })
+      ).unwrap();
+      // Retrieve the idToken directly from Firebase Authentication
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        throw new Error("No current user found after Summarist registration");
+      }
+      const idToken = await currentUser.getIdToken();
+      // Call the API to set the authToken cookie
+      await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ idToken }),
+      });
+      exitModal(); // Close the modal
+      // Determine the current path and navigate accordingly
+      routeReplacer(router);
     } catch (error) {
       setPasswordLength("Password should be at least 6 characters long");
-      console.error(error);
+      console.error("Summarist Register Error:", error);
     }
   };
 
   const handleSummaristLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await dispatch(summaristLogin({email, password})).unwrap(); // Pass email and password as an object
-      console.log("logged in");
-      exitModal(); // Close the modal after login
-      const currentPath = window.location.pathname;
-      if (currentPath === "/") {
-        router.push("/for-you");
-      } else if (currentPath.startsWith("/book/")) {
-        // Stay on the current book page
-      } else {
-        router.push("/for-you"); // Default fallback
+      // Dispatch the summaristLogin action to update Redux state with serializable data
+      const user = await dispatch(summaristLogin({ email, password })).unwrap();
+      // Retrieve the idToken directly from Firebase Authentication
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        throw new Error("No current user found after Summarist login");
       }
+      const idToken = await currentUser.getIdToken();
+      // Call the API to set the authToken cookie
+      await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ idToken }),
+      });
+      exitModal(); // Close the modal
+      // Determine the current path and navigate accordingly
+      routeReplacer(router);
     } catch (error) {
       setPasswordError("Error: password is invalid or user is not registered");
-      console.error(error);
+      console.error("Summarist Login Error:", error);
     }
   };
 
@@ -111,20 +163,27 @@ export default function Modal({ exitModal }: ModalProps) {
   };
   const handleGuestLogin = async () => {
     try {
-      await dispatch(guestLogin()); // Dispatch guest login action
-      console.log("guest logged in");
-      exitModal(); // Close the modal after login
-      const currentPath = window.location.pathname;
-
-      if (currentPath === "/") {
-        router.push("/for-you");
-      } else if (currentPath.startsWith("/book/")) {
-        // Stay on the current book page
-      } else {
-        router.push("/for-you"); // Default fallback
+      // Dispatch the guestLogin action to update Redux state with serializable data
+      const user = await dispatch(guestLogin()).unwrap();
+      // Retrieve the idToken directly from Firebase Authentication
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        throw new Error("No current user found after Guest login");
       }
+      const idToken = await currentUser.getIdToken();
+      // Call the API to set the authToken cookie
+      await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ idToken }),
+      });
+      exitModal(); // Close the modal
+      // Determine the current path and navigate accordingly
+      routeReplacer(router);
     } catch (error) {
-      console.error(error);
+      console.error("Guest Login Error:", error);
     }
   };
 

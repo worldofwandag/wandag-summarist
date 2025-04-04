@@ -24,10 +24,15 @@ function Sidebar(): React.JSX.Element {
     try {
       await dispatch(logoutUser()); // Call logout function
       console.log("logging out");
+      await fetch("/api/logout"); // Call the API to log out
+      // Force a page refresh to re-render server-side components
+      
+      window.location.reload();
       toast.success("Successfully logged out!");
     } catch (error) {
       console.error("Logout Error:", error);
       toast.error("Logout failed. Please try again.");
+      
     }
   };
 

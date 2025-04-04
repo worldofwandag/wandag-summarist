@@ -22,12 +22,14 @@ import { SerializableUser } from "../types/SerializableUser";
 const provider = new GoogleAuthProvider();
 
 // Action to perform Google login
+
 export const googleLogin = createAsyncThunk<
-  void,
+  SerializableUser, // Return only serializable data to Redux
   void,
   { dispatch: AppDispatch }
 >("auth/googleLogin", async (_, { dispatch }) => {
   const result: UserCredential = await signInWithPopup(auth, provider);
+  // Extract serializable user data
   const user: SerializableUser = {
     uid: result.user.uid,
     email: result.user.email,
@@ -35,17 +37,22 @@ export const googleLogin = createAsyncThunk<
     photoURL: result.user.photoURL,
     subscription: null, // Default subscription value for Google login
   };
+
   dispatch(googleUser(user)); // Dispatch only serializable data
   console.log("**TESTING IF GOOGLE AUTH WORKS**");
+
+  return user; // Return serializable user data
 });
 
 // Action to perform Google registration
 export const googleRegister = createAsyncThunk<
-  void,
+  SerializableUser, // Return only serializable data to Redux
   void,
   { dispatch: AppDispatch }
 >("auth/googleRegister", async (_, { dispatch }) => {
   const result: UserCredential = await signInWithPopup(auth, provider);
+
+  // Extract serializable user data
   const user: SerializableUser = {
     uid: result.user.uid,
     email: result.user.email,
@@ -53,13 +60,14 @@ export const googleRegister = createAsyncThunk<
     photoURL: result.user.photoURL,
     subscription: null, // Default subscription value for Google registration
   };
+
   dispatch(googleUser(user)); // Dispatch only serializable data
-  console.log("**TESTING IF GOOGLE AUTH WORKS**");
+  return user; // Return serializable user data
 });
 
 // Action to perform summarist registration
 export const summaristRegister = createAsyncThunk<
-  void,
+  SerializableUser, // Return only serializable data to Redux
   { email: string; password: string },
   { dispatch: AppDispatch }
 >("auth/summaristRegister", async ({ email, password }, { dispatch }) => {
@@ -68,6 +76,8 @@ export const summaristRegister = createAsyncThunk<
     email,
     password
   );
+
+  // Extract serializable user data
   const user: SerializableUser = {
     uid: userCredential.user.uid,
     email: userCredential.user.email,
@@ -75,13 +85,14 @@ export const summaristRegister = createAsyncThunk<
     photoURL: userCredential.user.photoURL,
     subscription: "basic", // Default subscription value for new registrations
   };
+
   dispatch(setUser(user)); // Dispatch only serializable data
-  console.log("**TESTING IF SUMMARIST AUTH WORKS**");
+  return user; // Return serializable user data
 });
 
 // Action to perform summarist login
 export const summaristLogin = createAsyncThunk<
-  void,
+  SerializableUser, // Return only serializable data to Redux
   { email: string; password: string },
   { dispatch: AppDispatch }
 >("auth/summaristLogin", async ({ email, password }, { dispatch }) => {
@@ -90,6 +101,8 @@ export const summaristLogin = createAsyncThunk<
     email,
     password
   );
+
+  // Extract serializable user data
   const user: SerializableUser = {
     uid: userCredential.user.uid,
     email: userCredential.user.email,
@@ -97,8 +110,9 @@ export const summaristLogin = createAsyncThunk<
     photoURL: userCredential.user.photoURL,
     subscription: "basic", // Default subscription value for login
   };
+
   dispatch(setUser(user)); // Dispatch only serializable data
-  console.log("**TESTING IF SUMMARIST AUTH WORKS**");
+  return user; // Return serializable user data
 });
 
 // Action for password reset
@@ -111,11 +125,13 @@ export const forgotPassword = createAsyncThunk<void, string>(
 
 // Action for guest login
 export const guestLogin = createAsyncThunk<
-  void,
+  SerializableUser, // Return only serializable data to Redux
   void,
   { dispatch: AppDispatch }
 >("auth/guestLogin", async (_, { dispatch }) => {
   const userCredential: UserCredential = await signInAnonymously(auth);
+
+  // Extract serializable user data
   const user: SerializableUser = {
     uid: userCredential.user.uid,
     email: null, // Guest users may not have an email
@@ -123,8 +139,9 @@ export const guestLogin = createAsyncThunk<
     photoURL: null,
     subscription: "guest", // Default subscription value for guest login
   };
+
   dispatch(guestUser(user)); // Dispatch only serializable data
-  console.log("**TESTING IF GUEST AUTH WORKS**");
+  return user; // Return serializable user data
 });
 
 // Action for user logout
